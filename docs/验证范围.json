@@ -1,0 +1,22 @@
+{
+  "date": "2026-11-02",
+  "androidVersion": "0.2.0",
+  "androidMumuAPI": 32,
+  "androidRegressionChecks": 43,
+  "androidRegressionPassed": true,
+  "nativeSelfTestAndAccountIsolationPassed": true,
+  "locationAttendanceTest": {
+    "ownTestCourse": true,
+    "actualOfficialReply": "success",
+    "teacherSigned": 1,
+    "teacherUnsigned": 0,
+    "specifiedLocationRestrictionTested": false
+  },
+  "iosCompiled": false,
+  "iosSigned": false,
+  "iosDeviceTested": false,
+  "rainLiveAccountTested": false,
+  "testAccountsIncluded": false,
+  "privateSigningMaterialIncluded": false,
+  "debugWebViewEnabled": false
+}

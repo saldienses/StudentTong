@@ -1,0 +1,109 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SuperAutoStudy 本机工作台</title>
+<style>body{font:16px/1.7 'Microsoft YaHei',sans-serif;background:#f1f5f9;color:#172b42;margin:0}main{max-width:960px;margin:45px auto;padding:0 24px}h1{font-size:32px;margin-bottom:0}h2{font-size:21px}section{background:white;border-radius:12px;padding:22px 28px;margin:20px 0;box-shadow:0 2px 10px #1936520a}input,select,button{font:inherit;box-sizing:border-box;padding:9px 12px;border:1px solid #bccbd9;border-radius:6px}input,select{width:100%;margin:5px 0 12px}button{background:#185b8d;color:white;cursor:pointer;margin:8px 12px 0 0}button:disabled{opacity:.5}label{display:block}small,.muted{color:#536b7d}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f2f6fa;padding:14px;border-radius:8px;font-size:14px}.row{display:grid;grid-template-columns:1fr 1fr;gap:20px}#notice{color:#994000}table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;border-bottom:1px solid #e4ebf1;padding:10px}a{color:#185b8d}@media(max-width:650px){.row{display:block}}
+.task-toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}.task-toolbar h2{margin:0}.task-toolbar small{font-size:12px}
+.task-summary{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}.summary-chip{background:#f2f6fa;border-radius:6px;padding:5px 11px;font-size:13px;color:#536b7d}
+.task-head,.task-item{display:grid;grid-template-columns:minmax(0,2fr) minmax(130px,1.1fr) 90px 66px;gap:20px;align-items:center;padding:16px 10px;border-bottom:1px solid #e4ebf1}.task-head{font-size:14px;font-weight:bold}.task-title{font-size:15px;overflow-wrap:anywhere}.task-detail{font-size:12px;color:#536b7d;margin-top:4px}.task-error{color:#a34530}.task-action{display:block;font-size:12px;padding:3px 10px;margin:7px 0 0}.task-retry{font-size:14px;color:#536b7d}
+.progress-label{display:flex;justify-content:space-between;font-size:13px;margin-bottom:7px}.progress-track{height:7px;background:#e8eff5;border-radius:10px;overflow:hidden}.progress-fill{height:100%;background:#357da8;border-radius:10px;transition:width .3s}.progress-completed .progress-fill{background:#4d9274}.progress-stopped .progress-fill{background:#8796a5}.progress-failed .progress-fill{background:#b16d59}
+.state-pill{display:inline-flex;align-items:center;gap:6px;border-radius:20px;padding:4px 9px;font-size:12px;white-space:nowrap;background:#edf1f5;color:#617488}.state-pill:before{content:'';width:6px;height:6px;flex-shrink:0;background:currentColor;border-radius:50%}.state-running,.state-answering{background:#e7f1fa;color:#21638e}.state-completed{background:#e9f4ee;color:#367355}.state-failed{background:#faeeea;color:#9a4d36}.state-stopped{background:#eef0f3;color:#65717d}.task-empty{padding:24px 10px;background:#f6f9fc;border-radius:8px;color:#536b7d;text-align:center}.task-note{font-size:12px;color:#536b7d;margin-top:12px}
+@media(max-width:650px){.task-head{display:none}.task-item{grid-template-columns:1fr auto;gap:12px;padding:18px 0}.task-course{grid-column:1/-1}.task-progress{min-width:0}.task-state{grid-column:2;grid-row:2}.task-retry{grid-column:1/-1;font-size:12px}.task-toolbar{gap:6px}.task-summary{gap:5px}section{padding:20px}main{padding:0 14px}}
+
+.task-live{grid-column:1/-1;background:#f4f8fc;border:1px solid #e2ebf4;border-radius:9px;padding:16px 18px;font-size:13px}.live-heading{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}.live-phase{font-size:12px;color:#21638e;background:#e7f1fa;border-radius:12px;padding:2px 9px}.live-chapter{color:#536b7d;font-size:12px;line-height:1.8;overflow-wrap:anywhere}.live-title{font-size:14px;font-weight:600;overflow-wrap:anywhere}.live-video,.live-quiz{margin-top:12px;padding-top:12px;border-top:1px solid #e0e9f2}.live-timeline{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:8px}.live-time-value{font-variant-numeric:tabular-nums;color:#185b8d;font-size:17px;font-weight:600}.live-caption{font-size:12px;color:#60778b;margin-top:7px}.live-source{color:#21638e}.live-quiz-position{font-size:18px;font-weight:600;color:#185b8d}.live-quiet{font-size:12px;color:#60778b}.live-activity{display:inline-flex;align-items:center;gap:6px}.live-activity:before{content:'';width:6px;height:6px;background:#357da8;border-radius:50%}.live-prepared{font-size:12px;color:#536b7d;margin-bottom:6px}
+@media(max-width:650px){.task-live{padding:13px;grid-column:1/-1}.live-heading{align-items:flex-start}.live-timeline{align-items:flex-start;flex-direction:column;gap:3px}.live-time-value{font-size:16px}}
+.task-action.stop-action{background:#fff;color:#516c82;border-color:#b9cada}.task-action.delete-action{background:#fff;color:#9a4d36;border-color:#dec8c0}.state-stopping{background:#fff3df;color:#946829}.ai-toggle{display:flex;gap:8px;align-items:center;margin:12px 0}.ai-toggle input{width:auto;margin:0}.ai-result{font-size:13px;color:#536b7d;min-height:1.7em;overflow-wrap:anywhere}.ai-controls{display:flex;gap:8px;flex-wrap:wrap}.ai-controls button{margin-right:0}.task-feedback{font-size:13px;color:#536b7d;min-height:1.7em;margin-top:6px}
+</style>
+<main><div class="muted">本机部署 · 127.0.0.1:3030</div><h1>SuperAutoStudy 本机工作台</h1><p class="live-phase" style="display:inline-block;margin:10px 0 0">网页优先版 · 小测状态核对 · 截图备用识别</p><p>服务状态、课程查询与任务操作。请在所在机构允许的范围内使用。</p>
+<p><a href="#tasks">本机任务</a>　<a href="#ai-settings">AI API 设置</a></p><section><h2>运行状态</h2><p id="health">正在检查服务和数据库…</p><button id="refresh">刷新状态</button><small> 页面不会自动提交学习任务。</small></section>
+<section id="ai-settings"><h2>AI API 设置</h2><p class="muted">DeepSeek 官方接口 · 题库无答案时使用。修改后立即生效，无需重启。</p><div class="row"><label>模型<select id="ai-model"><option value="deepseek-flash">deepseek-flash</option><option value="deepseek-v4-pro">deepseek-v4-pro</option></select></label><label>API Key<input id="ai-key" type="password" autocomplete="new-password" placeholder="留空保留已保存的密钥"></label></div><label class="ai-toggle"><input id="ai-enabled" type="checkbox">启用 DeepSeek 后备答题</label><label class="ai-toggle"><input id="ai-vision" type="checkbox">网页读取失败或图片题时，启用截图备用识别</label><p class="task-note">识别顺序：网页文字 → 题目截图 → 题号及选项校验。截图仅包含题目区域，发送至 DeepSeek Flash，产生额外 API 费用；无法匹配时不提交。当前接入章节小测，正式考试入口未接入。</p><div class="ai-controls"><button id="ai-save" disabled>保存配置</button><button id="ai-test" disabled>测试连接</button></div><p id="ai-result" class="ai-result" role="status">正在读取配置…</p><small class="muted">密钥仅保存在本机，不会回显。测试连接只读取官方模型列表，不发起答题请求。</small></section><section><h2>查询课程</h2><p class="muted">账号仅发送到本机服务，再由项目登录学习通。原项目会在本机数据库保存账号、密码和 Cookie，请妥善保管 data 文件夹。</p><form id="query"><div class="row"><label>学习通账号<input id="account" autocomplete="off" required></label><label>学习通密码<input id="password" type="password" autocomplete="off" required></label></div><button type="submit" id="lookup">查询课程</button></form><p id="notice"></p><label>选择课程<select id="course"><option value="">请先查询课程</option></select></label><button id="submit" disabled>提交所选课程任务</button><p class="muted">提交后原项目会立即开始处理该课程，可能同步进度和提交章节答案；已设为 1 倍速。没有使用你的账号验证外部平台功能。</p><pre id="result">操作结果将在这里显示。</pre></section>
+<section><div class="task-toolbar"><h2>本机任务</h2><small id="task-updated" aria-live="polite">每 3 秒自动刷新</small></div><div id="task-feedback" class="task-feedback" role="status"></div><div id="task-summary" class="task-summary"></div><div id="tasks" role="list" aria-label="本机课程任务">正在读取任务…</div><p class="task-note">进度来自本机章节处理日志，可能在章节完成后才更新；学习通实际进度以课程页面为准。“已停止”表示任务已暂停执行。</p><h2>最近日志</h2><pre id="logs">尚无数据</pre><p class="muted">“停止任务”只停止所选课程，工作台仍可使用。运行日志位于安装目录 logs 文件夹。</p></section>
+<section><h2>使用资料</h2><p>桌面使用指南快捷方式可打开配套 Word 文档。</p><a href="https://github.com/Dainoar/SuperAutoStudy" target="_blank" rel="noreferrer">项目仓库</a></section></main>
+<script>
+const el=id=>document.getElementById(id);let courses=[],queriedAccount='',queriedPassword='';
+const states={0:'待处理',1:'进行中',2:'队列中',3:'考试中',4:'已完成',5:'异常',6:'暂停'};
+async function api(path,body){const response=await fetch(path,body?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:{});if(!response.ok)throw Error('HTTP '+response.status);return response.json()}
+
+function node(tag,cls,text){const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=text;return n}
+
+function timeText(value){const total=Math.max(0,Math.floor(Number(value)||0)),h=Math.floor(total/3600),m=Math.floor(total%3600/60),sec=total%60;return(h?h+':':'')+String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0')}
+function emptyLiveCard(title,message){const card=node("div","live-video");card.appendChild(node("strong","",title));card.appendChild(node("div","live-caption",message));return card}
+function liveBlock(task){
+ const p=task.live_progress,box=node('div','task-live');
+ if(!p){box.appendChild(node('div','live-quiet',task.display_status==='stopped'?'点击“继续任务”后，将显示视频时间轴和小测题号。':'正在等待当前任务的实时记录…'));box.appendChild(emptyLiveCard('视频播放进度','暂无视频计时记录；处理视频时显示已播放与总时长。'));box.appendChild(emptyLiveCard('章节小测与答题进度','暂无小测记录；处理小测时显示题号和答题阶段。'));return box}
+ const active=p.active&&(task.execution_state==='running'),heading=node('div','live-heading');heading.appendChild(node('strong','',active?'当前执行':'最近执行记录'));heading.appendChild(node('span','live-phase',p.phase_label||'正在获取详情'));box.appendChild(heading);
+ if(p.chapter_total)box.appendChild(node('div','live-chapter','第 '+p.chapter_index+' / '+p.chapter_total+' 章'+(p.chapter_title?' · '+p.chapter_title:'')));
+ if(p.job_total)box.appendChild(node('div','live-chapter','本章待处理任务点 '+p.job_index+' / '+p.job_total));
+ if(p.job_title)box.appendChild(node('div','live-title',p.job_title));
+ if(p.recognition_source)box.appendChild(node('div','live-caption','题目读取：'+p.recognition_source));
+ if(p.video_duration_seconds!==undefined&&['video','audio','video_done','error'].includes(p.phase)){
+  const area=node('div','live-video');area._videoProgress={base:Number(p.video_estimated_seconds)||0,target:Number(p.video_target_seconds)||0,rate:active?Number(p.video_rate)||0:0,duration:Number(p.video_duration_seconds)||0,anchor:performance.now()};
+  area.setAttribute('data-live-video','true');const timeline=node('div','live-timeline');timeline.appendChild(node('span','live-activity',p.phase==='audio'?'音频计时':'视频计时'));timeline.appendChild(node('span','live-time-value',''));area.appendChild(timeline);
+  const track=node('div','progress-track');track.setAttribute('role','progressbar');track.setAttribute('aria-label','当前媒体的本机估算计时');track.setAttribute('aria-valuemin','0');track.setAttribute('aria-valuemax','100');track.appendChild(node('div','progress-fill'));area.appendChild(track);
+  area.appendChild(node('div','live-caption','最近上报 '+timeText(p.video_reported_seconds)+' · 时间轴为本机估算，平台完成情况以学习通为准'));box.appendChild(area);
+ }
+ if(p.question_total!==undefined){
+  const quiz=node('div','live-quiz'),types={single:'单选题',multiple:'多选题',judgement:'判断题',fill:'填空题',short:'简答题'};
+  quiz.appendChild(node('div','live-quiz-position','章节小测 · 第 '+(p.question_index||0)+' / '+p.question_total+' 题'));
+  quiz.appendChild(node('div','live-caption live-source',[types[p.question_type]||'',p.answer_source||p.phase_label].filter(Boolean).join(' · ')));
+  const prepared=Math.min(Number(p.question_total)||0,Number(p.prepared_questions)||0);quiz.appendChild(node('div','live-prepared','已准备答案 '+prepared+' / '+p.question_total));
+  const track=node('div','progress-track');track.setAttribute('role','progressbar');track.setAttribute('aria-label','小测答案准备进度');track.setAttribute('aria-valuemin','0');track.setAttribute('aria-valuemax','100');const percentage=p.question_total?prepared/p.question_total*100:0;track.setAttribute('aria-valuenow',String(percentage));const fill=node('div','progress-fill');fill.style.width=percentage+'%';track.appendChild(fill);quiz.appendChild(track);
+  quiz.appendChild(node('div','live-caption','题号反映本机处理顺序；答案准备完成不代表已提交或回答正确。'));box.appendChild(quiz);
+ }
+ if(p.video_duration_seconds===undefined)box.appendChild(emptyLiveCard('视频播放进度','暂无视频计时记录；处理视频时显示时间轴。'));
+ if(p.question_total===undefined)box.appendChild(emptyLiveCard('章节小测与答题进度','暂无小测题号记录；处理小测时显示题号和答题阶段。'));
+ return box;
+}
+function tickVideo(){document.querySelectorAll('[data-live-video]').forEach(area=>{const p=area._videoProgress;if(!p)return;const estimate=Math.max(0,Math.min(p.duration,p.target,p.base+(performance.now()-p.anchor)/1000*p.rate));area.querySelector('.live-time-value').textContent=timeText(estimate)+' / '+timeText(p.duration);const percent=p.duration?estimate/p.duration*100:0;area.querySelector('.progress-fill').style.width=percent+'%';area.querySelector('[role=progressbar]').setAttribute('aria-valuenow',percent.toFixed(1))})}
+setInterval(tickVideo,1000);
+
+function renderTasks(tasks){
+ const counts={active:0,completed:0,stopped:0,failed:0};
+ const list=document.createDocumentFragment();
+ const head=node('div','task-head');head.setAttribute('aria-hidden','true');['课程','完成进度','运行状态','重试'].forEach(x=>head.appendChild(node('span','',x)));list.appendChild(head);
+ tasks.forEach(t=>{
+  const state=t.display_status||'unknown';if(state==='running'||state==='answering')counts.active++;if(state==='completed')counts.completed++;if(state==='stopped')counts.stopped++;if(state==='failed')counts.failed++;
+  const item=node('article','task-item');item.setAttribute('role','listitem');
+  const course=node('div','task-course');course.appendChild(node('div','task-title',t.course_name||'未命名课程'));
+  if(t.current_chapter_index!==null&&t.current_chapter_index!==undefined)course.appendChild(node('div','task-detail','最近处理：第 '+(Number(t.current_chapter_index)+1)+' 个章节'));
+  if(t.error_message&&state==='failed')course.appendChild(node('div','task-detail task-error',t.error_message));
+  item.appendChild(course);
+  const progress=node('div','task-progress progress-'+state),label=node('div','progress-label');
+  const known=t.current_progress!==null&&t.current_progress!==undefined&&Number.isFinite(Number(t.current_progress));
+  const value=known?Math.max(0,Math.min(100,Number(t.current_progress))):0;
+  const percent=known?new Intl.NumberFormat('zh-CN',{maximumFractionDigits:2}).format(value)+'%':'尚无进度';
+  label.appendChild(node('span','',percent));progress.appendChild(label);
+  const track=node('div','progress-track');track.setAttribute('role','progressbar');track.setAttribute('aria-label',(t.course_name||'课程')+'完成进度');track.setAttribute('aria-valuemin','0');track.setAttribute('aria-valuemax','100');
+  if(known)track.setAttribute('aria-valuenow',String(value));else track.setAttribute('aria-valuetext','尚无章节进度记录');
+  const fill=node('div','progress-fill');fill.style.width=value+'%';track.appendChild(fill);progress.appendChild(track);item.appendChild(progress);
+  const stateCell=node('div','task-state');stateCell.appendChild(node('span','state-pill state-'+state,t.status_label||'状态未知'));
+  if((state==='stopped'||state==='failed')&&t.task_id){const resume=node('button','task-action','继续任务');resume.onclick=async()=>{if(!confirm('确认继续这门课程？将使用已保存的账号信息，从上次章节记录继续处理。'))return;resume.disabled=true;try{const r=await api('/local/tasks/'+encodeURIComponent(t.task_id)+'/resume',{});el('notice').textContent=r.msg;el('result').textContent=JSON.stringify(r,null,2);el('notice').textContent=r.msg||'请查看任务状态';await refresh()}catch(e){el('notice').textContent=e.message}finally{resume.disabled=false}};stateCell.appendChild(resume)}
+  if(['running','queued','answering','pending'].includes(state)&&t.task_id){const stop=node('button','task-action stop-action','停止任务');stop.onclick=()=>taskAction(t,'stop',stop);stateCell.appendChild(stop)}
+  if(state==='stopping')stateCell.appendChild(node('small','muted','等待执行退出'));
+  if(!['running','queued','answering','stopping'].includes(state)&&t.task_id){const remove=node('button','task-action delete-action','删除任务');remove.onclick=()=>taskAction(t,'delete',remove);stateCell.appendChild(remove)}
+  if(['stopped','failed','completed'].includes(state)&&t.task_id){const rescan=node('button','task-action','重新检查');rescan.onclick=()=>taskAction(t,'rescan',rescan);stateCell.appendChild(rescan)}
+  item.appendChild(stateCell);
+  item.appendChild(node('div','task-retry',String(t.retry_count??0)+' 次'));item.appendChild(liveBlock(t));list.appendChild(item);
+ });
+ if(!tasks.length){el('tasks').replaceChildren(node('div','task-empty','暂无课程任务。查询课程并提交后，可在这里查看进度。'));}else el('tasks').replaceChildren(list);tickVideo();
+ const summary=el('task-summary');summary.replaceChildren();[['全部',tasks.length],['进行中',counts.active],['已完成',counts.completed],['已停止',counts.stopped],['执行异常',counts.failed]].forEach(([name,count])=>summary.appendChild(node('span','summary-chip',name+' '+count)));
+}
+let refreshing=false;
+async function refresh(){if(refreshing)return;refreshing=true;try{
+ const r=await api('/local/status');el('health').textContent='服务正常 · 数据库 '+r.database+' · 最近任务 '+r.tasks.length+' 条';
+ renderTasks(r.tasks);el('logs').textContent=r.logs.length?JSON.stringify(r.logs,null,2):'暂无任务日志';
+ el('task-updated').textContent='更新于 '+new Date().toLocaleTimeString('zh-CN',{hour12:false})+' · 每 3 秒刷新';
+ }catch(e){el('health').textContent='服务未就绪：'+e.message;el('task-updated').textContent='连接中断 · 当前显示为上次记录';}finally{refreshing=false}}
+setInterval(()=>{if(!document.hidden)refresh()},3000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh()});
+
+async function taskAction(task,action,button){
+ const message=action==='rescan'?'从第一章重新检查这门课程？将跳过平台已标记完成的任务，并处理尚未完成的视频与小测。':action==='delete'?'删除本机任务“'+task.course_name+'”？学习通课程及本机日志会保留。':'停止“'+task.course_name+'”？将中止当前执行并保留已记录的进度。';
+ if(!confirm(message))return;button.disabled=true;
+ try{const r=await api('/local/tasks/'+encodeURIComponent(task.task_id)+'/'+action,{});el('task-feedback').textContent=r.msg;await refresh()}catch(e){el('task-feedback').textContent='操作失败：'+e.message}finally{button.disabled=false}
+}
+async function loadAiSettings(){try{const r=await api('/local/ai/config');if(r.code!==200)throw Error(r.msg);el('ai-model').value=r.data.model;el('ai-enabled').checked=r.data.enabled;el('ai-vision').checked=r.data.visionFallback;el('ai-key').value='';el('ai-result').textContent=r.data.configured?'已保存密钥 · '+(r.data.enabled?'已启用':'已关闭')+' · '+r.data.model:'尚未配置密钥';el('ai-save').disabled=false;el('ai-test').disabled=false}catch(e){el('ai-result').textContent='读取配置失败：'+e.message}}
+async function aiAction(action){el('ai-save').disabled=true;el('ai-test').disabled=true;el('ai-result').textContent=action==='test'?'正在验证官方接口…':'正在保存配置…';try{const r=await api('/local/ai/'+(action==='save'?'config':'test'),{apiKey:el('ai-key').value.trim(),model:el('ai-model').value,enabled:el('ai-enabled').checked,visionFallback:el('ai-vision').checked});el('ai-result').textContent=r.msg;if(r.code===200&&action==='save')el('ai-key').value=''}catch(e){el('ai-result').textContent='操作失败：'+e.message}finally{el('ai-save').disabled=false;el('ai-test').disabled=false}}
+el('ai-save').onclick=()=>aiAction('save');el('ai-test').onclick=()=>aiAction('test');loadAiSettings();
+
+el('refresh').onclick=refresh;
+el('query').onsubmit=async e=>{e.preventDefault();el('lookup').disabled=true;el('submit').disabled=true;el('notice').textContent='正在查询，请稍候…';try{const account=el('account').value.trim(),password=el('password').value;const r=await api('/chaoxing/course',{account,password});el('result').textContent=JSON.stringify(r,null,2);courses=r.code===200&&Array.isArray(r.data)?r.data:[];queriedAccount=account;queriedPassword=password;el('course').replaceChildren();courses.forEach((c,i)=>{const o=document.createElement('option');o.value=i;o.textContent=(c.title||c.courseId||c.id)+' '+(c.teacher||'');el('course').appendChild(o)});el('submit').disabled=!courses.length;el('notice').textContent=courses.length?'查询到 '+courses.length+' 门课程。':r.msg||'未获取课程，请检查账号或查看日志。'}catch(e){el('notice').textContent=e.message}finally{el('lookup').disabled=false}};
+el('submit').onclick=async()=>{const c=courses[Number(el('course').value)];if(!c)return;if(el('account').value.trim()!==queriedAccount||el('password').value!==queriedPassword){el('notice').textContent='账号已更改，请重新查询课程。';return}if(!confirm('确认提交课程 '+(c.title||c.courseId)+'？原项目会立即执行任务并可能提交章节答案。'))return;el('submit').disabled=true;try{const r=await api('/chaoxing',{loginAccount:queriedAccount,password:queriedPassword,courseId:c.courseId||c.id,courseName:c.title});el('result').textContent=JSON.stringify(r,null,2);el('notice').textContent=r.msg||'请查看任务状态';await refresh()}catch(e){el('notice').textContent=e.message}finally{el('submit').disabled=false}};refresh();
+</script></html>

@@ -1,0 +1,30 @@
+// !$*UTF8*$!
+{ archiveVersion = 1; classes = {}; objectVersion = 56; objects = {
+80DA8804A598FC55FB130E85 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StudentTongApp.swift"; sourceTree = "<group>"; };
+113D8818EF2FF0D4E65FAFB6 = { isa = PBXBuildFile; fileRef = 80DA8804A598FC55FB130E85; };
+1CC326AC7BD7880DDEECA3A9 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Models.swift"; sourceTree = "<group>"; };
+FD825685184AF3166D56C1B1 = { isa = PBXBuildFile; fileRef = 1CC326AC7BD7880DDEECA3A9; };
+F68440E510C02A3309224383 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Browser.swift"; sourceTree = "<group>"; };
+CEAA086255661D3F14CF844C = { isa = PBXBuildFile; fileRef = F68440E510C02A3309224383; };
+795A02A63DC9C1E86758E98F = { isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Assets.xcassets"; sourceTree = "<group>"; };
+D0ADC22F3C046CC76298F620 = { isa = PBXBuildFile; fileRef = 795A02A63DC9C1E86758E98F; };
+8C545750C8565159BBB38417 = { isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "reader.js"; sourceTree = "<group>"; };
+A425A7EE605BE0ACEA5E710F = { isa = PBXBuildFile; fileRef = 8C545750C8565159BBB38417; };
+CFB1D3FC40586566946F58F6 = { isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = "media.js"; sourceTree = "<group>"; };
+5F972909C9D5ABE0E832A43C = { isa = PBXBuildFile; fileRef = CFB1D3FC40586566946F58F6; };
+A8792157CB4F27FB949C035F = { isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StudentTong.app; sourceTree = BUILT_PRODUCTS_DIR; };
+1455444174429298B0F374B3 = { isa = PBXGroup; children = (80DA8804A598FC55FB130E85,1CC326AC7BD7880DDEECA3A9,F68440E510C02A3309224383,795A02A63DC9C1E86758E98F,8C545750C8565159BBB38417,CFB1D3FC40586566946F58F6,); path = StudentTong; sourceTree = "<group>"; };
+B9E7F2871A3402983868AFC8 = { isa = PBXGroup; children = (A8792157CB4F27FB949C035F,); name = Products; sourceTree = "<group>"; };
+19F479106CE8C3BA8C106518 = { isa = PBXGroup; children = (1455444174429298B0F374B3,B9E7F2871A3402983868AFC8,); sourceTree = "<group>"; };
+878A52FC5FF6A57D50B7B870 = { isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (113D8818EF2FF0D4E65FAFB6,FD825685184AF3166D56C1B1,CEAA086255661D3F14CF844C, ); runOnlyForDeploymentPostprocessing = 0; };
+41D311A605520FC7B8B9A980 = { isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (D0ADC22F3C046CC76298F620,A425A7EE605BE0ACEA5E710F,5F972909C9D5ABE0E832A43C, ); runOnlyForDeploymentPostprocessing = 0; };
+E2AA269EB967A8853A258BFA = { isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+5DF0EAF287A59303D4EFEAF3 = { isa = XCBuildConfiguration; buildSettings = { CLANG_ENABLE_MODULES = YES; SDKROOT = iphoneos; IPHONEOS_DEPLOYMENT_TARGET = 17.0; SWIFT_VERSION = 5.0; }; name = Debug; };
+B8EB4DC6EE71CC2FBFD201B8 = { isa = XCBuildConfiguration; buildSettings = { ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; DEVELOPMENT_TEAM = ""; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_CFBundleDisplayName = "学生通"; INFOPLIST_KEY_UILaunchScreen_Generation = YES; INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "在你允许时供平台页面使用本机位置"; INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES; MARKETING_VERSION = 0.1.0; PRODUCT_BUNDLE_IDENTIFIER = com.studenttong.mobile; PRODUCT_NAME = "$(TARGET_NAME)"; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; IPHONEOS_DEPLOYMENT_TARGET = 17.0; SWIFT_OPTIMIZATION_LEVEL = "-Onone"; }; name = Debug; };
+C62D9534737287C44FD6EF43 = { isa = XCBuildConfiguration; buildSettings = { CLANG_ENABLE_MODULES = YES; SDKROOT = iphoneos; IPHONEOS_DEPLOYMENT_TARGET = 17.0; SWIFT_VERSION = 5.0; }; name = Release; };
+2EF9ECCD715FED9D8FF379BE = { isa = XCBuildConfiguration; buildSettings = { ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; DEVELOPMENT_TEAM = ""; GENERATE_INFOPLIST_FILE = YES; INFOPLIST_KEY_CFBundleDisplayName = "学生通"; INFOPLIST_KEY_UILaunchScreen_Generation = YES; INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "在你允许时供平台页面使用本机位置"; INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES; MARKETING_VERSION = 0.1.0; PRODUCT_BUNDLE_IDENTIFIER = com.studenttong.mobile; PRODUCT_NAME = "$(TARGET_NAME)"; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = "1,2"; IPHONEOS_DEPLOYMENT_TARGET = 17.0; SWIFT_OPTIMIZATION_LEVEL = "-O"; }; name = Release; };
+B4E10CAA9C5E22150B71559C = { isa = XCConfigurationList; buildConfigurations = (5DF0EAF287A59303D4EFEAF3,C62D9534737287C44FD6EF43,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+4A807E8A027297B0B93701FB = { isa = XCConfigurationList; buildConfigurations = (B8EB4DC6EE71CC2FBFD201B8,2EF9ECCD715FED9D8FF379BE,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+34A04005BCAF206EEC990BD9 = { isa = PBXNativeTarget; buildConfigurationList = 4A807E8A027297B0B93701FB; buildPhases = (878A52FC5FF6A57D50B7B870,41D311A605520FC7B8B9A980,E2AA269EB967A8853A258BFA,); buildRules = (); dependencies = (); name = StudentTong; productName = StudentTong; productReference = A8792157CB4F27FB949C035F; productType = "com.apple.product-type.application"; };
+244210E48437B6556980A702 = { isa = PBXProject; attributes = { LastUpgradeCheck = 1500; TargetAttributes = { 34A04005BCAF206EEC990BD9 = { CreatedOnToolsVersion = 15.0; }; }; }; buildConfigurationList = B4E10CAA9C5E22150B71559C; compatibilityVersion = "Xcode 14.0"; developmentRegion = zh-Hans; hasScannedForEncodings = 0; knownRegions = ("zh-Hans",en,Base,); mainGroup = 19F479106CE8C3BA8C106518; productRefGroup = B9E7F2871A3402983868AFC8; projectDirPath = ""; projectRoot = ""; targets = (34A04005BCAF206EEC990BD9,); };
+}; rootObject = 244210E48437B6556980A702; }

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "modules": [
+    {
+      "id": "homework",
+      "assembly": "Assessments.Provider.dll",
+      "enabled": true,
+      "type": "Assessments.HomeworkProvider"
+    },
+    {
+      "id": "exams",
+      "assembly": "Assessments.Provider.dll",
+      "enabled": true,
+      "type": "Assessments.ExamProvider"
+    }
+  ]
+}

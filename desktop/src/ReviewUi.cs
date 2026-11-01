@@ -1,0 +1,66 @@
+using System;using System.Collections.Generic;using System.Linq;using System.IO;using System.Threading.Tasks;using System.Windows;using System.Windows.Controls;using System.Windows.Media;using Microsoft.Win32;
+namespace StudyDesk {
+ public partial class Desktop {
+  class ReviewCourse {public string Id;public string Name{get;set;}public Dictionary<string,object> Meta;}
+  ComboBox reviewCourses;TextBlock reviewStats;StackPanel practiceArea;List<ReviewCourse> reviewCourseRows=new List<ReviewCourse>();
+  List<Dictionary<string,object>> practiceRows;int practiceIndex,practiceCorrect;bool reviewLoading,practiceActive,practiceChecking;string practiceCourse;CheckBox reviewAllowReference;bool practiceAllowReferences;
+  void BuildReview(){
+   practiceActive=false;reviewCourseRows=new List<ReviewCourse>();
+   var panel=Column();panel.Children.Add(Text("课程复习资料",21,"#293B58"));panel.Children.Add(Text("收录已添加课程的章节小测和独立作业。只读取题目和平台已公布答案，不答题、不交卷；考试题目尚未接入。",13,"#78869B"));
+   reviewCourses=new ComboBox{DisplayMemberPath="Name",MinHeight=38,Margin=new Thickness(0,6,0,12)};reviewCourses.SelectionChanged+=(s,e)=>{if(!practiceActive)UpdateReviewStats();};panel.Children.Add(reviewCourses);reviewStats=Text("正在读取本机复习题库…",13,"#5274A8");panel.Children.Add(reviewStats);
+   var collect=new WrapPanel();collect.Children.Add(Button("收录 / 更新课程题目",async()=>await CollectReview(),false));collect.Children.Add(Button("刷新收录状态",async()=>await LoadReview(),true));panel.Children.Add(collect);
+   var exports=new WrapPanel{Margin=new Thickness(0,12,0,0)};exports.Children.Add(Button("导出 Word 复习版",async()=>await ExportReview("docx","review"),true));exports.Children.Add(Button("导出 Word 自测版",async()=>await ExportReview("docx","self"),true));exports.Children.Add(Button("导出 JSON 备份",async()=>await ExportReview("json","review"),true));panel.Children.Add(exports);
+   panel.Children.Add(Text("导出当前已收录的全部题目，按课程、章节小测 / 作业及具体来源分组。平台答案、题库参考与 AI 参考分别标注，不混淆来源。",12,"#8793A6"));content.Children.Add(Card(panel));
+   var practice=Column();practice.Children.Add(Text("答题练习",21,"#293B58"));practice.Children.Add(Text("优先平台公布答案；无平台答案时可用题库 / AI 参考判分，并明确标注。答对进入下一题，答错显示来源并记录错题。参考答案可能有误。",13,"#78869B"));
+   reviewAllowReference=new CheckBox{Content="无平台答案时允许题库 / AI 参考判分（逐题查询，AI 可能产生费用）",IsChecked=true,Margin=new Thickness(0,5,0,12)};practice.Children.Add(reviewAllowReference);reviewAllowReference.Checked+=(s,e)=>UpdateReviewStats();reviewAllowReference.Unchecked+=(s,e)=>UpdateReviewStats();
+   var buttons=new WrapPanel();buttons.Children.Add(Button("开始自测",async()=>await StartPractice(false),false));buttons.Children.Add(Button("只练错题",async()=>await StartPractice(true),true));buttons.Children.Add(Button("结束练习",()=>EndPractice(),true));practice.Children.Add(buttons);practiceArea=Column();practiceArea.Margin=new Thickness(0,18,0,0);practice.Children.Add(practiceArea);content.Children.Add(Card(practice));
+   var unused=LoadReview();
+  }
+  ReviewCourse SelectedReview(){return reviewCourses==null?null:reviewCourses.SelectedItem as ReviewCourse;}
+  async Task LoadReview(){if(page!="review"||reviewLoading)return;reviewLoading=true;int version=scopeVersion;try{var r=await client.RequestAsync("/local/review/courses",null,lifetime.Token);if(page!="review"||version!=scopeVersion)return;string selected=SelectedReview()==null?null:SelectedReview().Id;
+    var rows=Data.Rows(r,"data").ToList();bool changed=rows.Count!=reviewCourseRows.Count||rows.Any(row=>!reviewCourseRows.Any(c=>c.Id==Data.Text(row,"id")));
+    if(changed&&!practiceActive){reviewCourseRows=rows.Select(row=>new ReviewCourse{Id=Data.Text(row,"id"),Name=Data.Text(row,"name"),Meta=row}).ToList();reviewCourses.ItemsSource=reviewCourseRows;reviewCourses.SelectedItem=reviewCourseRows.FirstOrDefault(c=>c.Id==selected)??reviewCourseRows.FirstOrDefault();}
+    else foreach(var row in rows){var found=reviewCourseRows.FirstOrDefault(c=>c.Id==Data.Text(row,"id"));if(found!=null)found.Meta=row;}
+    UpdateReviewStats();
+   }catch(Exception e){Message(Friendly(e));}finally{reviewLoading=false;}}
+  void UpdateReviewStats(){var c=SelectedReview();if(c==null){reviewStats.Text="还没有课程。请先在章节页添加课程。";return;}var coverage=Data.Map(c.Meta,"coverage");reviewStats.Text="已收录 "+Data.Text(c.Meta,"count")+" 题 · 可练 "+Data.Text(c.Meta,reviewAllowReference!=null&&reviewAllowReference.IsChecked==true?"practiceCandidates":"gradeable")+" 题 · 平台答案可判分 "+Data.Text(c.Meta,"gradeable")+" 题 · 参考答案缓存 "+Data.Text(c.Meta,"referenceCount")+" 题 · 错题 "+Data.Text(c.Meta,"wrongCount")+" 题\n"+(coverage==null?"尚未收录，点击上方按钮开始。":Data.Text(coverage,"message")+"\n章节检查："+Data.Text(coverage,"processed")+" / "+Data.Text(coverage,"total"));Message(Data.Flag(c.Meta,"collecting")?"正在只读收录，已收录内容会逐步保存。":"练习作答仅在本机判分；参考答案可查询题库或AI，不交作业、不交卷。");}
+  async Task CollectReview(){var c=SelectedReview();if(c==null||practiceActive)return;try{var r=await Write("/local/review/collect",new Dictionary<string,object>{{"course",c.Id}});Message(Data.Text(r,"msg"));await LoadReview();}catch(Exception e){Message(Friendly(e));}}
+  async Task ExportReview(string format,string mode){var c=SelectedReview();if(c==null)return;try{
+   var dialog=new SaveFileDialog{Filter=format=="json"?"JSON 题库|*.json":"Word 文档|*.docx",FileName=SafeName(c.Name)+(mode=="self"?" 自测版":" 复习版")+"."+format,DefaultExt="."+format};var folder=Path.Combine(Root,"exports");Directory.CreateDirectory(folder);dialog.InitialDirectory=folder;if(dialog.ShowDialog(window)!=true)return;
+   Message("正在导出当前已收录题目…");var r=await Write("/local/review/export",new Dictionary<string,object>{{"course",c.Id},{"format",format},{"mode",mode}});var data=Data.Map(r,"data");File.WriteAllBytes(dialog.FileName,Convert.FromBase64String(Data.Text(data,"fileBase64")));Message("已导出："+dialog.FileName);
+  }catch(Exception e){Message(Friendly(e));}}
+  static string SafeName(string name){foreach(char c in Path.GetInvalidFileNameChars())name=name.Replace(c,'_');return name;}
+  async Task StartPractice(bool wrong){if(practiceChecking)return;var c=SelectedReview();if(c==null)return;practiceAllowReferences=reviewAllowReference.IsChecked==true;int requestScope=scopeVersion;try{var r=await client.RequestAsync("/local/review/questions?course="+Uri.EscapeDataString(c.Id)+"&practice=true&references="+(practiceAllowReferences?"true":"false")+"&wrong="+(wrong?"true":"false"),null,lifetime.Token);if(requestScope!=scopeVersion||page!="review")return;practiceRows=Data.Rows(r,"data").ToList();practiceArea.Children.Clear();if(practiceRows.Count==0){practiceArea.Children.Add(Text(wrong?"暂无可练习的错题，请先完成练习。":"当前没有可练习题目。请先收录，或勾选允许题库 / AI 参考判分。",15,"#78869B"));return;}practiceCourse=c.Id;practiceIndex=0;practiceCorrect=0;practiceActive=true;reviewCourses.IsEnabled=false;reviewAllowReference.IsEnabled=false;RenderPractice();}catch(Exception e){Message(Friendly(e));}}
+  void EndPractice(){if(practiceChecking)return;practiceActive=false;if(reviewCourses!=null)reviewCourses.IsEnabled=true;if(reviewAllowReference!=null)reviewAllowReference.IsEnabled=true;if(practiceArea!=null){practiceArea.Children.Clear();practiceArea.Children.Add(Text("练习已结束，错题记录已保存在本机。",14,"#78869B"));}var unused=LoadReview();}
+  void RenderPractice(){
+   if(page!="review"||!practiceActive)return;practiceArea.Children.Clear();if(practiceIndex>=practiceRows.Count){practiceArea.Children.Add(Text("本轮练习完成 · 答对 "+practiceCorrect+" / "+practiceRows.Count+" 题",19,"#368664"));practiceActive=false;reviewCourses.IsEnabled=true;if(reviewAllowReference!=null)reviewAllowReference.IsEnabled=true;var unused=LoadReview();return;}
+   var q=practiceRows[practiceIndex];string type=Data.Text(q,"type");practiceArea.Children.Add(Text("第 "+(practiceIndex+1)+" / "+practiceRows.Count+" 题 · "+(type=="multiple"?"多选":type=="judgement"?"判断":type=="fill"?"填空":"单选")+" · "+Data.Text(q,"kind")+" / "+Data.Text(q,"unit"),12,"#78869B"));practiceArea.Children.Add(Text(Data.Text(q,"title"),18,"#293B58"));
+   practiceArea.Children.Add(Text(Data.Flag(q,"gradeable")?"判分来源：平台公布答案":Data.Flag(q,"referenceAvailable")?"参考判分："+Data.Text(q,"referenceSource")+"（非平台标准答案）":"参考判分：提交本题时先查题库，无结果再用 AI；不是平台标准答案。",13,"#A06532"));TextBox fillAnswer=null;
+   var choices=new List<CheckBox>();var radios=new List<RadioButton>();var labels=new List<string>();
+   object options;var values=new List<string>();if(q.TryGetValue("options",out options)&&options is System.Collections.IEnumerable)foreach(var o in (System.Collections.IEnumerable)options)values.Add(Convert.ToString(o));
+   if(type=="fill"){fillAnswer=new TextBox{MinHeight=65,AcceptsReturn=true,TextWrapping=TextWrapping.Wrap};practiceArea.Children.Add(Text("填空按答案文字精确匹配，多空请用 # 分隔。",12,"#78869B"));practiceArea.Children.Add(fillAnswer);values.Clear();}
+   if(type=="judgement")values=new List<string>{"正确","错误"};int optionIndex=0;
+   foreach(string text in values){string label=type=="judgement"?(optionIndex==0?"true":"false"):System.Text.RegularExpressions.Regex.Match(text,"^\\s*([A-Z])").Groups[1].Value;if(label.Length==0)label=((char)('A'+optionIndex)).ToString();labels.Add(label);optionIndex++;
+    if(type=="multiple"){var choice=new CheckBox{Content=new TextBlock{Text=text,TextWrapping=TextWrapping.Wrap},Margin=new Thickness(0,7,0,7),FontSize=15};choices.Add(choice);practiceArea.Children.Add(choice);}
+    else{var choice=new RadioButton{Content=new TextBlock{Text=text,TextWrapping=TextWrapping.Wrap},GroupName="review-practice",Margin=new Thickness(0,7,0,7),FontSize=15};radios.Add(choice);practiceArea.Children.Add(choice);}
+   }
+   var feedback=Text("",14,"#5274A8");practiceArea.Children.Add(feedback);Button submit=null;submit=Button("提交本题",async()=>{
+    if(practiceChecking)return;var selected=new List<string>();if(type=="fill"){if(!string.IsNullOrWhiteSpace(fillAnswer.Text))selected.Add(fillAnswer.Text.Trim());}else if(type=="multiple"){for(int i=0;i<choices.Count;i++)if(choices[i].IsChecked==true)selected.Add(labels[i]);}else for(int i=0;i<radios.Count;i++)if(radios[i].IsChecked==true)selected.Add(labels[i]);if(selected.Count==0){feedback.Text="请先选择答案。";return;}
+    practiceChecking=true;submit.IsEnabled=false;feedback.Text=Data.Flag(q,"gradeable")?"正在按平台答案判分…":"正在获取题库 / AI 参考答案并判分，请稍候…";window.UpdateLayout();feedback.BringIntoView();try{var r=await Write("/local/review/check",new Dictionary<string,object>{{"course",practiceCourse},{"id",Data.Text(q,"id")},{"answer",string.Join("",selected)},{"allowReference",practiceAllowReferences}});var result=Data.Map(r,"data");string source=Data.Text(result,"answerSource");if(source.Length==0)source="平台公布答案";bool reference=Data.Flag(result,"referenceGrading");string expected=Data.Text(result,"gradingAnswer");if(expected.Length==0)expected=Data.Text(result,"platformAnswer");foreach(var cb in choices)cb.IsEnabled=false;foreach(var rb in radios)rb.IsEnabled=false;if(fillAnswer!=null)fillAnswer.IsEnabled=false;
+     if(Data.Flag(result,"correct")){practiceCorrect++;feedback.Foreground=Color("#368664");feedback.Text=(reference?"参考判分认为答对 · "+source+"（非平台标准）":"回答正确 · 平台公布答案")+"，正在进入下一题…";await Task.Delay(reference?1500:650);practiceIndex++;RenderPractice();}
+     else{feedback.Foreground=Color("#A65645");feedback.Text=(reference?"参考判分认为答错，已标记参考错题。":"回答错误，已标记为错题。")+"\n"+source+"："+expected+(reference?"（非平台标准，可能有误）":"")+"\n"+(Data.Text(result,"explanation").Length==0?"平台未公布解析。":Data.Text(result,"explanation"));var next=Button("下一题",()=>{practiceIndex++;RenderPractice();},false);practiceArea.Children.Add(next);window.UpdateLayout();next.BringIntoView();}
+    }catch(Exception e){feedback.Text=Friendly(e);submit.IsEnabled=true;}finally{practiceChecking=false;}
+   },false);practiceArea.Children.Add(submit);window.UpdateLayout();practiceArea.BringIntoView();
+  }
+  bool reviewUiFixture,reviewFixturePassed,reviewUiReferenceFixture;
+  async Task VerifyReviewPractice(){
+   await StartPractice(false);if(practiceRows.Count!=3)throw new InvalidOperationException("Fixture practice count");
+   practiceArea.Children.OfType<RadioButton>().ElementAt(1).IsChecked=true;
+   practiceArea.Children.OfType<Button>().First(b=>Convert.ToString(b.Content)=="提交本题").RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));await Task.Delay(100);
+   if(!practiceArea.Children.OfType<TextBlock>().Any(t=>reviewUiReferenceFixture?t.Text.Contains("参考错题")&&t.Text.Contains("AI参考答案：A")&&t.Text.Contains("非平台标准"):t.Text.Contains("已标记为错题")&&t.Text.Contains("平台公布答案：A")))throw new InvalidOperationException("Wrong answer feedback missing");Capture("practice-fixture-wrong");
+   practiceArea.Children.OfType<Button>().First(b=>Convert.ToString(b.Content)=="下一题").RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));if(practiceIndex!=1)throw new InvalidOperationException("Wrong answer next");
+   practiceArea.Children.OfType<RadioButton>().First().IsChecked=true;practiceArea.Children.OfType<Button>().First(b=>Convert.ToString(b.Content)=="提交本题").RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Button.ClickEvent));await Task.Delay(reviewUiReferenceFixture?1750:850);
+   if(practiceIndex!=2||practiceCorrect!=1)throw new InvalidOperationException("Correct answer did not auto advance");Capture("practice-fixture-correct-next");reviewFixturePassed=true;EndPractice();
+  }
+ }
+}

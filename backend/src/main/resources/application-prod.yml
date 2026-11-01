@@ -1,0 +1,53 @@
+enable-service-registry: false   #k控制Nacos注册配置,Dubbo注册
+spring:
+  datasource:
+    url: 
+    username:
+    password: 
+  cloud:
+    nacos:
+      discovery:
+        enabled: ${enable-service-registry}
+        server-addr: 
+        namespace: 
+        register-enabled: ${enable-service-registry}
+  application:
+    name: super-auto
+
+dubbo:
+  application:
+    name: dubbo-super-auto
+  config-center:
+    enabled: ${enable-service-registry}
+  metadata-report:
+    enabled: ${enable-service-registry}
+  registry:
+    register: ${enable-service-registry}
+    address: 
+  protocol:
+    name: dubbo
+    port: 20880
+  scan:
+    base-packages: com.tihai.service.dubbo
+  consumer:
+    timeout: 10000
+
+cors:
+  allow:
+    origins:
+      - "http://localhost:3030"  #允许跨域的域名
+
+
+custom:
+  thread-pool:
+    core-size: 5
+    max-size: 10
+    keep-alive: 60
+    queue-capacity: 100
+    thread-name-prefix: "priority-pool-"
+    allow-core-thread-timeout: true
+
+
+study:
+  chaoxing:
+    speed: 3

@@ -1,0 +1,52 @@
+server:
+  address: 127.0.0.1
+  port: 3030
+enable-service-registry: false
+spring:
+  main:
+    web-application-type: servlet
+  datasource:
+    url: jdbc:mysql://127.0.0.1:13306/tihai?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=UTF-8
+    username: superauto
+    password: ${STUDENTTONG_DB_PASSWORD}
+  cloud:
+    nacos:
+      config:
+        enabled: false
+      discovery:
+        enabled: false
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration
+dubbo:
+  enabled: false
+  application:
+    name: super-auto-local
+    qos-enable: false
+  registry:
+    address: N/A
+  protocol:
+    host: 127.0.0.1
+    port: -1
+custom:
+  thread-pool:
+    core-size: 2
+    max-size: 4
+    keep-alive: 60
+    queue-capacity: 100
+    thread-name-prefix: local-study-
+    allow-core-thread-timeout: true
+study:
+  chaoxing:
+    speed: 1
+cors:
+  allow:
+    origins:
+      - http://127.0.0.1:3030
+      - http://localhost:3030
+large:
+  model:
+    qwen-api-key: ""
+tiku:
+  settings:
+    endpoints: []
