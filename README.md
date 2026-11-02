@@ -10,7 +10,7 @@ Windows 本机工作台 · Android 独立手机版 · iOS 工程
 [下载安装](https://github.com/saldienses/StudentTong/releases) · [手机版指南](docs/手机版使用指南.md) · [上游与许可证](UPSTREAM.md)
 </div>
 
-学生通将学习通、雨课堂的学习页面、任务、复习与账号管理放进一个本机工作台。账号资料保存在各自的本机空间；Android 可独立使用，不需要电脑提供后台服务。
+学生通将学习通、雨课堂的学习页面、任务、复习与账号管理放进一个本机工作台。账号资料保存在各自的本机空间；Android 可独立使用，不需要电脑提供后台服务。Windows可稳定运行刷课，Android版有待开发。
 
 ## 功能
 
