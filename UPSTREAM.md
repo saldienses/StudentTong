@@ -17,6 +17,6 @@
 - 默认地图数据及地理编码来自OpenStreetMap/Nominatim，遵循可见署名、用户主动查询、缓存与限速规则；支持更换有权使用的HTTPS服务。没有嵌入GoGoGo源码。
 - 系统模拟定位使用Android官方TestProvider接口，不替换系统GPS/网络Provider，不隐藏Mock标记，不绕过平台验证。
 
-## Windows 0.3.0 分发
+## Windows 0.3.1 分发
 
-Windows自动配置脚本、目录隔离与打包流程为本项目修改。Playwright1.62.1按Apache-2.0及其ThirdPartyNotices随包保留声明；仅保留所需Chromium运行路径，省略可选的Chrome/Edge重装脚本。Java、MariaDB和Node运行时不随配置ZIP分发，由首次启动从清单列出的官方来源下载并校验，各自许可证随官方档案保留。Inno Setup为可选构建工具，未随发布ZIP分发；项目源码包含安装脚本，当前发布以已验证ZIP为准。
+Windows原生.NET环境配置、归档安全解析、目录隔离和安装脚本为本项目实现。安装器不携带用户数据或Java/MariaDB/Node/Playwright运行时；这些依赖首次从清单中的官方来源下载并校验。仅使用Microsoft Playwright Core1.62.1的浏览器API与CLI，按Apache-2.0及其ThirdPartyNotices保留声明。Inno Setup7为可选构建工具，构建工具本身不随项目分发。各依赖许可证随官方下载档案保留。旧0.3.0源码和分发记录在对应Git标签中保留。

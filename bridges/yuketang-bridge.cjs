@@ -2,7 +2,7 @@
 const path=require('path'),fs=require('fs'),crypto=require('crypto'),readline=require('readline');
 const sessionNonce=crypto.randomUUID();
 const root=process.env.STUDYDESK_ROOT||path.resolve(__dirname,'..');
-const {chromium}=require(path.join(root,'runtime/vision-node/node_modules/playwright'));
+const {chromium}=require(path.join(root,'runtime/vision-node/node_modules/playwright-core'));
 let context,primary,job=null,identity='',timer,busy=false;const aiWaiters=new Map(),courseLinks=new Map();
 const emit=m=>process.stdout.write(JSON.stringify(m)+'\n');
 function allowed(s,lesson=false){try{const u=new URL(s);return u.protocol==='https:'&&!u.username&&!u.password&&!u.port&&['yuketang.cn','gdufemooc.cn'].some(d=>u.hostname===d||u.hostname.endsWith('.'+d))&&(!lesson||/^\/(v2\/web\/|pro\/lms\/|ai-workspace\/lms-graph\/)/.test(u.pathname));}catch{return false;}}

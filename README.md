@@ -31,7 +31,7 @@ Windows 本机工作台 · Android 独立手机版 · iOS 工程
 打开 [Releases](https://github.com/saldienses/StudentTong/releases)，按设备选择：
 
 - `StudentTong-Android-0.3.0.apk`：Android 9及以上；同一发布签名可覆盖更新。APK签名私钥不在仓库中。
-- `StudentTong-Windows-0.3.0-AutoSetup.zip`：Windows 10/11 64位解压自动配置包，完整解压到新目录后双击“启动学生通.cmd”，程序自动下载并校验所需环境，创建独立空数据库；首次联网，后续双击桌面快捷方式即可启动。推荐安装到D盘，旧版数据不会自动迁移或覆盖。见[Windows部署说明](docs/Windows部署说明.md)。
+- `StudentTong-Windows-0.3.1-Setup.exe`：Windows 10/11 64位EXE安装器，安装后打开“学生通”原生配置窗口，点击“配置环境并启动”；自动下载校验官方环境并创建独立空数据库，首次需联网。推荐安装到D盘，旧版数据不会自动迁移或覆盖。见[Windows部署说明](docs/Windows部署说明.md)。
 - `StudentTong-iOS-source-0.2.0.zip`：iOS工程；需要Mac、Xcode与自己的签名Team构建。ZIP不能直接安装到iPhone；本版本原生签到中心仅适配Android。
 
 ## Android签到
@@ -43,11 +43,11 @@ Windows 本机工作台 · Android 独立手机版 · iOS 工程
 
 位置来自Android系统LocationManager，显示原始WGS84与转换后的平台BD09坐标。定位过期或精度无效时拒绝提交。模拟器测试可使用模拟器自身的定位工具；软件如实展示系统提供的模拟标记，不替代平台安全验证。验证码、人脸和官方客户端专有验证需要用户按平台要求处理，提醒可以在设置中选择开启。
 
-## 0.3.0 更新与验证范围
+## Windows 0.3.1 / Android 0.3.0 更新与验证范围
 
 Android 0.3.0 提供原生界面、地图与常用位置管理、独立官方 Mock Provider 和前台定位服务；保留系统模拟标记，不覆盖GPS/网络定位提供者。原生定位、服务恢复与账号隔离已在MuMu Android12测试；在线地图检索依赖网络，模拟器测试网络未能访问地图服务。0.3.0模拟位置签到未取得成功回执，不能据此声称所有学校的签到都已兼容。详见 [Android0.3使用说明](android/学生通-Android-0.3.0-使用说明.md)。
 
-Windows 0.3.0 新增目录独立运行配置、自动下载校验运行环境、随机本机数据库密码及端口，并保留现有工作台功能。交付验证记录见 [Windows安装测试](docs/Windows安装测试.md)。首次安装需联网，不是完整离线运行时包。iOS仍为未经编译签名的工程。
+Windows 0.3.1 改为标准EXE与可见原生配置窗口，移除PowerShell引导，固定官方依赖与哈希并保持目录和数据库隔离。安全核查与测试范围见 [Windows0.3.1验收](docs/Windows-0.3.1-安全核查与安装验收.md)。首次配置需联网，不是完整离线运行时包。iOS仍为未经编译签名的工程。
 
 ## 开发与目录
 
@@ -55,7 +55,7 @@ Windows 0.3.0 新增目录独立运行配置、自动下载校验运行环境、
 - `ios/`：SwiftUI、WKWebView及本机存储，见[iOS说明](ios/README.md)。
 - `backend/`：基于SuperAutoStudy修改的Java8 / Spring Boot后台。
 - `desktop/`：Windows WPF本机界面、模块合同与插件示例。
-- `windows/`：Windows配置包、启动脚本、依赖清单和可复现打包脚本。
+- `windows/`：Windows原生配置程序、EXE安装脚本、依赖清单与归档安全测试。
 - `bridges/`：平台浏览器适配脚本；配置放在各自的本机运行目录。
 - `third-party/`、`licenses/`：原始脚本与上游许可证。
 

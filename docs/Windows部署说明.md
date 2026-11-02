@@ -1,25 +1,17 @@
-# 学生通 Windows 0.3.0 安装说明
+# 学生通 Windows 0.3.1
 
-适用 Windows 10/11 64位。下载 StudentTong-Windows-0.3.0-AutoSetup.zip，完整解压到新目录，双击“启动学生通.cmd”。推荐 D:\tool\qita\StudentTong。首次完成后会创建桌面快捷方式。首次需要联网；配置程序将自动校验并配置 Java、MariaDB、Node 和 Chromium，无需手动配置数据库或环境变量。
+双击 StudentTong-Windows-0.3.1-Setup.exe，推荐安装到 D:\tool\qita\StudentTong 的新目录。安装器只安装应用文件，不自动运行配置脚本、不更改防护设置。
 
-1. 等待下载、文件校验、空数据库创建和工作台启动。
-2. 以后双击桌面的“学生通”或安装目录“启动学生通.cmd”。
-3. 关闭界面后后台可能继续运行。停止本目录全部后台：双击“停止学生通.cmd”。
-4. 安装程序只包含程序与空表结构，没有账号、密码、Cookie、API Key和历史任务。请在软件中登录、配置自己的API。
-5. 每个安装目录使用独立数据库和端口。不要在程序运行时移动文件夹或覆盖安装；移动目录前先停止后台，整体保留 config、data、runtime。移动后双击“启动学生通.cmd”会重新检查路径。
-6. 安装器不迁移旧版账号与数据库。旧版不会被自动删除或覆盖，已有旧版时请选择不同目录；可在新版重新登录。
+安装完成后从桌面“学生通”或安装目录“学生通.exe”打开可见的环境配置窗口，点击“配置环境并启动”。首次需要联网，从官方来源下载并校验 Java、MariaDB、Node、Playwright Core 和对应Chromium。数据库与缓存、下载、日志均放在所选目录，不修改系统PATH，不注册后台服务。
 
-## 文件与网络
+以后仍使用桌面快捷方式启动。已有旧版“学生通”快捷方式时，新版将使用“学生通0.3.1”，不会覆盖旧版入口。关闭界面不等于停止后台，停止请重新打开环境配置窗口，点击“停止本版本后台”。
 
-下载、缓存、日志、数据库和浏览器都位于所选目录，不修改系统 PATH、不注册 Windows 服务。安装在D盘即可将这些应用文件留在D盘。Windows自身的临时记录、桌面快捷方式和系统组件由Windows管理。
+账号、Cookie、API Key和旧版历史数据不在安装包中；本版不自动迁移旧数据库。旧版请保留，并在新版本登录自己的账号。升级现有0.3.1目录前请先停止该版本后台并关闭界面；不要在运行中移动目录。
 
-若系统缺少微软VC++运行库，会下载并验证微软签名，再请求Windows授权安装该系统组件。需要管理员同意的仅是该系统运行库，不能保证系统组件文件不写入系统盘。当前电脑已具备该运行库，此分支未在全新Windows虚拟机测试。
+如果缺少微软VC++运行库，配置窗口会给出微软官方下载链接，需要用户自行确认安装该系统组件。本程序不静默修改系统组件；当前电脑已具备运行库，该分支未在全新Windows虚拟机验证。
 
-首次配置需要访问 GitHub、archive.mariadb.org、nodejs.org、Playwright 浏览器CDN。网络失败后保留已下载的完整文件，重新运行即可重试；不关闭TLS或文件校验。该发布包未购买代码签名证书。
+官方访问域名包括 GitHub、archive.mariadb.org、nodejs.org、registry.npmjs.org 与 Playwright浏览器CDN。下载断开后保留完整已校验文件和诊断日志，可重试。问题查看logs/environment-setup.log、environment-error.log、application.log与database.err。不要公开上传config、data或完整个人日志。
 
-启动故障查看 logs/startup-error.log、application.out.log、database.err 和 download-*.log，不要将含账号资料的完整 config 或 data 文件夹公开上传。
+本版使用可见原生.NET配置程序，移除旧版PowerShell引导和执行策略Bypass调用。运行时下载均校验固定SHA256；浏览器依赖档案同时与npm官方SHA512来源核对。依赖来源不等于绝对安全保证，保持安全软件开启。
 
-## 上游及运行时
-
-项目源代码：https://github.com/saldienses/StudentTong 。Windows后台基于 Dainoar/SuperAutoStudy。详细许可证见 UPSTREAM.md、licenses 和各运行时随附的 LICENSE。
-Java 使用 Eclipse Temurin8 JRE；数据库 MariaDB11.4.5；Node24.22.1；Playwright1.62.1 和对应 Chromium。准确官方下载地址及SHA256保存在 runtime-manifest.json。运行时首次从官方来源下载；安装器内不含Java/MariaDB运行时二进制。
+上游、许可证及验收范围见仓库：https://github.com/saldienses/StudentTong 。此安装包未购买代码签名证书，测试结果只代表这台电脑和记录时的检测库，不能承诺所有安全产品永不报警。

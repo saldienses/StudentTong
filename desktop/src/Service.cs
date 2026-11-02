@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -23,7 +23,7 @@ namespace StudyDesk {
     using(var response=await http.SendAsync(request,cancel)){
      if(!response.IsSuccessStatusCode)throw new InvalidOperationException("本机服务请求失败，HTTP "+(int)response.StatusCode);
      var result=json.Deserialize<Dictionary<string,object>>(await response.Content.ReadAsStringAsync());
-     if(result==null)throw new InvalidOperationException("服务返回内容为空");if(path=="/local/status"&&System.IO.File.Exists(System.IO.Path.Combine(Desktop.Root,"config","portable-state.json"))&&(!result.ContainsKey("installationRoot")||!System.IO.Path.GetFullPath(Data.Text(result,"installationRoot")).Equals(Desktop.Root,StringComparison.OrdinalIgnoreCase)))throw new InvalidOperationException("本机端口由其他安装目录使用，正在准备独立服务");
+     if(result==null)throw new InvalidOperationException("服务返回内容为空");if(path=="/local/status"&&(System.IO.File.Exists(System.IO.Path.Combine(Desktop.Root,"distribution.json"))||System.IO.File.Exists(System.IO.Path.Combine(Desktop.Root,"config","portable-state.json")))&&(!result.ContainsKey("installationRoot")||!System.IO.Path.GetFullPath(Data.Text(result,"installationRoot")).Equals(Desktop.Root,StringComparison.OrdinalIgnoreCase)))throw new InvalidOperationException("本机端口由其他安装目录使用，正在准备独立服务");
      if(result.ContainsKey("code")&&Convert.ToInt32(result["code"])!=200)throw new InvalidOperationException(Data.Text(result,"msg"));
      return result;
     }

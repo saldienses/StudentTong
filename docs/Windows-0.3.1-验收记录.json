@@ -1,0 +1,77 @@
+{
+  "date": "2026-11-02",
+  "version": "Windows 0.3.1",
+  "kasperskyVersion": "21.22.0.1",
+  "protectionTasksRunning": {
+    "SW2": true,
+    "AMSI": true,
+    "File_Monitoring": true
+  },
+  "defenseDisabledOrExclusionsAdded": false,
+  "newVersionBehaviorDetectionsInReport": 0,
+  "finalInstallerInstallExitCode": 0,
+  "nativeFirstConfigureExitCode": 0,
+  "nativeStopAndRestartExitCodes": [
+    0,
+    0
+  ],
+  "freshDesktopConfiguredOwnRoot": true,
+  "desktopReadonly": {
+    "applicationName": "学生通",
+    "autoSubmitDefaultOff": true,
+    "nativeDesktop": true,
+    "serviceConnected": true,
+    "taskCount": 0,
+    "navigationPages": 6,
+    "platformSwitchAvailable": true,
+    "accountSwitchAvailable": true,
+    "reviewPracticeFixturePassed": false,
+    "mutationRequests": 0,
+    "apiKeyEmpty": true,
+    "homeworkAvailable": true,
+    "examsAvailable": true
+  },
+  "nativeArchiveContractsPassed": 4,
+  "actualChromiumRenderPassed": true,
+  "staticScanFinalInstallerAndTwoExeObjects": {
+    "objects": 3,
+    "detected": 0,
+    "suspicions": 0,
+    "errors": 0
+  },
+  "staticScanOfficialCoreObjects": {
+    "objects": 114,
+    "detected": 0,
+    "suspicions": 0,
+    "errors": 0
+  },
+  "dependencyIntegrity": {
+    "playwright": {
+      "officialRegistryIntegrityMatches": true,
+      "retainedFilesUnmodified": true,
+      "retainedFiles": 62,
+      "omittedOptionalFiles": 0
+    },
+    "playwright-core": {
+      "officialRegistryIntegrityMatches": true,
+      "retainedFilesUnmodified": true,
+      "retainedFiles": 94,
+      "omittedOptionalFiles": 17
+    }
+  },
+  "sha256": "31ed487afb0f1bcb1f978ce2d73ff91f51318ec1946f25dcb57a4adf50945147",
+  "vendorFalsePositiveConfirmationReceived": false,
+  "codeSigningCertificatePurchased": false,
+  "limitations": [
+    "Results apply only to this Windows machine and recorded security state.",
+    "No guarantee for other vendors or future databases.",
+    "Missing VC++ runtime branch was not tested on a clean Windows image.",
+    "No real course answers or examinations were submitted in this packaging test."
+  ],
+  "desktopSettingsStopButton": {
+    "bothOwnedPortsClosed": true,
+    "formalInstallUntouched": true,
+    "desktopSettingsStopButtonPassed": true
+  },
+  "existingConfigPreservedOnInstallerUpdate": true
+}

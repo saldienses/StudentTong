@@ -5,9 +5,9 @@
  #define Output "..\release"
 #endif
 [Setup]
-AppId=StudentTong-0.3
+AppId=StudentTong
 AppName=学生通
-AppVersion=0.3.0
+AppVersion=0.3.1
 AppPublisher=StudentTong Community
 AppPublisherURL=https://github.com/saldienses/StudentTong
 DefaultDirName=D:\tool\qita\StudentTong
@@ -20,20 +20,20 @@ ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 MinVersion=10.0
 OutputDir={#Output}
-OutputBaseFilename=StudentTong-Windows-0.3.0-Setup
-Compression=lzma2/fast
-SolidCompression=yes
+OutputBaseFilename=StudentTong-Windows-0.3.1-Setup
+Compression=none
+SolidCompression=no
 SetupIconFile={#Payload}\client\StudyDesk.ico
 UninstallDisplayIcon={app}\client\StudyDesk.ico
 WizardStyle=modern
 [Messages]
-SetupWindowTitle=学生通 0.3.0 安装
+SetupWindowTitle=学生通 0.3.1 安装
 WelcomeLabel1=欢迎使用学生通安装程序
-WelcomeLabel2=安装程序将准备学生通文件，随后自动下载并校验运行环境。首次需要联网。建议安装在D盘的新目录，旧版数据不会自动迁移或清空。
+WelcomeLabel2=安装程序将准备学生通文件，完成后可在原生配置窗口中下载并校验官方运行环境。首次需要联网。建议安装在D盘的新目录，旧版数据不会自动迁移或清空。
 SelectDirLabel3=请选择学生通的安装目录。
 SelectDirBrowseLabel=推荐 D:\tool\qita\StudentTong。下载、缓存和数据库均放在所选目录。
 FinishedHeadingLabel=学生通安装完成
-FinishedLabel=以后可通过桌面快捷方式启动。若首次环境配置失败，请检查网络并双击安装目录中的“启动学生通.cmd”重试。
+FinishedLabel=以后可通过桌面快捷方式启动。若环境配置失败，请检查网络并双击安装目录中的“学生通.exe”重试。
 ButtonNext=下一步(&N) >
 ButtonBack=< 上一步(&B)
 ButtonCancel=取消
@@ -45,12 +45,15 @@ Name: desktopicon; Description: 创建桌面“学生通”快捷方式
 [Files]
 Source: "{#Payload}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 [Icons]
-Name: "{userdesktop}\学生通"; Filename: "{app}\启动学生通.cmd"; WorkingDir: "{app}"; IconFilename: "{app}\client\StudyDesk.ico"; Tasks: desktopicon; Check: CanCreateShortcut
-Name: "{group}\学生通"; Filename: "{app}\启动学生通.cmd"; WorkingDir: "{app}"; IconFilename: "{app}\client\StudyDesk.ico"
+Name: "{userdesktop}\{code:DesktopLinkName}"; Filename: "{app}\学生通.exe"; WorkingDir: "{app}"; IconFilename: "{app}\client\StudyDesk.ico"; Tasks: desktopicon
+Name: "{group}\学生通"; Filename: "{app}\学生通.exe"; WorkingDir: "{app}"; IconFilename: "{app}\client\StudyDesk.ico"
+[Run]
+Filename: "{app}\学生通.exe"; Description: 打开学生通环境配置窗口; Flags: postinstall skipifsilent nowait unchecked
 [Code]
-function CanCreateShortcut: Boolean;
+function DesktopLinkName(Param: String): String;
 begin
- Result := not FileExists(ExpandConstant('{userdesktop}\学生通.lnk'));
+ if FileExists(ExpandConstant('{userdesktop}\学生通.lnk')) then Result := '学生通0.3.1'
+ else Result := '学生通';
 end;
 function NextButtonClick(CurPageID: Integer): Boolean;
 begin
@@ -84,20 +87,9 @@ begin
    Result := '安装目录标识不匹配，请另选新目录。';
  end;
 end;
-procedure CurStepChanged(CurStep: TSetupStep);
-var Code: Integer; Args: String;
-begin
- if (CurStep = ssPostInstall) and (ExpandConstant('{param:NOENV|0}') <> '1') then begin
-  WizardForm.StatusLabel.Caption := '正在配置环境，请等待下载、数据库初始化与后台启动完成...';
-  Args := '-NoProfile -ExecutionPolicy Bypass -File "' + ExpandConstant('{app}\Start-StudentTong.ps1') + '"';
-  if ExpandConstant('{param:NOCLIENT|0}') = '1' then Args := Args + ' -NoClient';
-  if not Exec(ExpandConstant('{sys}\WindowsPowerShell\v1.0\powershell.exe'), Args, ExpandConstant('{app}'), SW_SHOW, ewWaitUntilTerminated, Code) or (Code <> 0) then
-   MsgBox('环境配置尚未完成。文件已保留，请检查网络后双击安装目录“启动学生通.cmd”重试。详见logs文件夹。', mbError, MB_OK);
- end;
-end;
 procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
 var Code: Integer;
 begin
  if CurUninstallStep = usUninstall then
-  Exec(ExpandConstant('{sys}\WindowsPowerShell\v1.0\powershell.exe'), '-NoProfile -ExecutionPolicy Bypass -File "' + ExpandConstant('{app}\Stop-SuperAutoStudy.ps1') + '"', ExpandConstant('{app}'), SW_HIDE, ewWaitUntilTerminated, Code);
+  Exec(ExpandConstant('{app}\学生通.exe'), '--stop', ExpandConstant('{app}'), SW_SHOW, ewWaitUntilTerminated, Code);
 end;

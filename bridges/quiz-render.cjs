@@ -1,6 +1,6 @@
 // Render only course question areas. Scripts and all non-static network requests are disabled.
 const fs=require('fs'),path=require('path');
-const {chromium}=require(path.join(__dirname,'../runtime/vision-node/node_modules/playwright'));
+const {chromium}=require(path.join(__dirname,'../runtime/vision-node/node_modules/playwright-core'));
 let raw='';process.stdin.setEncoding('utf8');process.stdin.on('data',c=>{raw+=c;if(raw.length>16*1024*1024)process.exit(2)});
 process.stdin.on('end',async()=>{
  let browser;
