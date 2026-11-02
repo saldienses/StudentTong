@@ -1,4 +1,4 @@
-$ErrorActionPreference='Stop'
+﻿$ErrorActionPreference='Stop'
 $stage=$PSScriptRoot;$javaHome='D:\tool\PyCharm 2025.1.2\jbr';$tools="$stage\tools\android-14";$androidJar="$stage\tools\android-34-ext12\android.jar"
 $env:JAVA_HOME=$javaHome;$env:TEMP="$stage\temp";$env:TMP=$env:TEMP
 New-Item -ItemType Directory -Force "$stage\build\classes","$stage\build\dex","$stage\temp","$stage\private","$stage\release"|Out-Null
@@ -17,17 +17,21 @@ Check 'Resource compilation'
 & "$tools\aapt2.exe" link -I $androidJar --manifest "$stage\app\AndroidManifest.xml" -A "$stage\app\assets" --min-sdk-version 28 --target-sdk-version 34 -o "$stage\build\unsigned.apk" "$stage\build\resources.zip"
 Check 'APK linking'
 $zip=[System.IO.Compression.ZipFile]::Open("$stage\build\unsigned.apk",[System.IO.Compression.ZipArchiveMode]::Update)
-try{[void][System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip,"$stage\build\dex\classes.dex","classes.dex")}finally{$zip.Dispose()}
+try{
+ # Windows AAPT2 can write backslash asset names; Android AssetManager requires slash paths.
+ $renames=@($zip.Entries|Where-Object {$_.FullName.Contains('\')})
+ foreach($entry in $renames){$name=$entry.FullName.Replace('\','/');$memory=New-Object IO.MemoryStream;$reader=$entry.Open();try{$reader.CopyTo($memory)}finally{$reader.Dispose()};$entry.Delete();$replacement=$zip.CreateEntry($name,[IO.Compression.CompressionLevel]::Optimal);$writer=$replacement.Open();try{$memory.Position=0;$memory.CopyTo($writer)}finally{$writer.Dispose();$memory.Dispose()}}
+ [void][System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile($zip,"$stage\build\dex\classes.dex","classes.dex")
+}finally{$zip.Dispose()}
 Check 'DEX packaging'
 & "$tools\zipalign.exe" -f -p 4 "$stage\build\unsigned.apk" "$stage\build\aligned.apk"
 Check 'APK alignment'
 $signingHome=if($env:STUDENTTONG_SIGNING_HOME){$env:STUDENTTONG_SIGNING_HOME}else{"$stage\private"};New-Item -ItemType Directory -Force $signingHome|Out-Null
 $passwordFile="$signingHome\signing-password.txt";$keystore="$signingHome\studenttong-release.jks"
-if(!(Test-Path $passwordFile)){[byte[]]$random=New-Object byte[] 32;[Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($random);[Convert]::ToBase64String($random)|Set-Content $passwordFile -Encoding ascii -NoNewline}
+if(!(Test-Path $passwordFile) -or !(Test-Path $keystore)){throw 'Existing release signing key/password missing; upgrade signing stopped, no new key generated'}
 $env:STUDENTTONG_SIGN_PASS=(Get-Content $passwordFile -Raw).Trim()
 try {
- if(!(Test-Path $keystore)){& "$javaHome\bin\keytool.exe" -genkeypair -keystore $keystore -alias studenttong -storepass:env STUDENTTONG_SIGN_PASS -keypass:env STUDENTTONG_SIGN_PASS -keyalg RSA -keysize 3072 -validity 10000 -dname 'CN=StudentTong Local Release,OU=StudentTong,O=StudentTong,C=CN';Check 'Signing key generation'}
- $apk="$stage\release\学生通-Android-0.2.0.apk"
+ $apk="$stage\release\学生通-Android-0.3.0.apk"
  & "$javaHome\bin\java.exe" -jar "$tools\lib\apksigner.jar" sign --ks $keystore --ks-key-alias studenttong --ks-pass env:STUDENTTONG_SIGN_PASS --key-pass env:STUDENTTONG_SIGN_PASS --out $apk "$stage\build\aligned.apk"
  Check 'APK signing'
  & "$javaHome\bin\java.exe" -jar "$tools\lib\apksigner.jar" verify --verbose --print-certs $apk

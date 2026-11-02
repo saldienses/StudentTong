@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 @Component
 public class DeepSeekClient {
-    private static final Path CONFIG = Paths.get("D:/tool/qita/SuperAutoStudy/config/deepseek.properties");
+    private static final Path CONFIG = com.tihai.utils.InstallRoot.path("config/deepseek.properties");
     @org.springframework.beans.factory.annotation.Autowired
     private LiveProgressTracker liveProgress;
     private final ObjectMapper json = new ObjectMapper();

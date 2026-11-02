@@ -1,6 +1,6 @@
 /* Student exam browser bridge. Runs platform scripts; never fabricates verification or signatures. */
 const fs=require('fs'),path=require('path'),readline=require('readline');
-const {chromium}=require(path.join(process.env.STUDYDESK_ROOT||'D:/tool/qita/SuperAutoStudy','runtime/vision-node/node_modules/playwright'));
+const {chromium}=require(path.join(process.env.STUDYDESK_ROOT||path.resolve(__dirname,'..'),'runtime/vision-node/node_modules/playwright'));
 let browser,context,page,identity,total=0,closed=false,submissionAttempted=false;const answered=new Set();
 function emit(value){process.stdout.write(JSON.stringify(value)+'\n');}
 function safeError(e){return String(e.message||e).replace(/https?:\/\/\S+/g,'[页面]').slice(0,180);}

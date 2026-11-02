@@ -1,7 +1,7 @@
 // StudentTong browser bridge. Profiles and runtime files stay under the D: installation.
 const path=require('path'),fs=require('fs'),crypto=require('crypto'),readline=require('readline');
 const sessionNonce=crypto.randomUUID();
-const root=process.env.STUDYDESK_ROOT||'D:/tool/qita/SuperAutoStudy';
+const root=process.env.STUDYDESK_ROOT||path.resolve(__dirname,'..');
 const {chromium}=require(path.join(root,'runtime/vision-node/node_modules/playwright'));
 let context,primary,job=null,identity='',timer,busy=false;const aiWaiters=new Map(),courseLinks=new Map();
 const emit=m=>process.stdout.write(JSON.stringify(m)+'\n');

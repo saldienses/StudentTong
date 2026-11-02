@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.*;
 public class AiSettingsService {
     private final Path file;
     private final OkHttpClient http;
-    public AiSettingsService(){this(Paths.get("D:/tool/qita/SuperAutoStudy/config/deepseek.properties"),new OkHttpClient.Builder().callTimeout(25,TimeUnit.SECONDS).build());}
+    public AiSettingsService(){this(com.tihai.utils.InstallRoot.path("config/deepseek.properties"),new OkHttpClient.Builder().callTimeout(25,TimeUnit.SECONDS).build());}
     AiSettingsService(Path file,OkHttpClient http){this.file=file;this.http=http;}
     private Properties read() throws IOException {Properties p=new Properties();if(Files.exists(file))try(Reader r=Files.newBufferedReader(file,StandardCharsets.UTF_8)){p.load(r);}return p;}
     private String model(String requested,Properties existing){String m=requested==null?existing.getProperty("model","deepseek-flash"):requested;if(!Arrays.asList("deepseek-flash","deepseek-v4-pro").contains(m))throw new IllegalArgumentException("不支持的模型");return m;}

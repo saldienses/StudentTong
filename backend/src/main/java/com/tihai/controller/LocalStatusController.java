@@ -27,7 +27,7 @@ public class LocalStatusController {
     @GetMapping("/local/status")
     public Map<String,Object> status() {
         Map<String,Object> result=new LinkedHashMap<>();
-        result.put("service","SuperAutoStudy");
+        result.put("service","SuperAutoStudy");result.put("installationId",com.tihai.utils.InstallRoot.installationId());result.put("installationRoot",com.tihai.utils.InstallRoot.root().toString());
         result.put("database",db.queryForObject("SELECT 1",Integer.class)==1?"ok":"error");
         List<Map<String,Object>> tasks=db.queryForList(
             "SELECT t.id AS task_id,t.course_name,t.status,t.retry_count,t.creat_time,"+

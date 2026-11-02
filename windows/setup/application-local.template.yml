@@ -1,0 +1,53 @@
+server:
+  address: 127.0.0.1
+  port: __HTTP_PORT__
+enable-service-registry: false
+spring:
+  main:
+    web-application-type: servlet
+  datasource:
+    url: jdbc:mysql://127.0.0.1:__DB_PORT__/tihai?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=UTF-8
+    username: studenttong
+    password: __DB_PASSWORD__
+  cloud:
+    nacos:
+      config:
+        enabled: false
+      discovery:
+        enabled: false
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration
+dubbo:
+  enabled: false
+  application:
+    name: super-auto-local
+    qos-enable: false
+  registry:
+    address: N/A
+  protocol:
+    host: 127.0.0.1
+    port: -1
+custom:
+  thread-pool:
+    core-size: 2
+    max-size: 4
+    keep-alive: 60
+    queue-capacity: 100
+    thread-name-prefix: local-study-
+    allow-core-thread-timeout: true
+study:
+  chaoxing:
+    speed: 1
+large:
+  model:
+    api-key: ''
+tiku:
+  settings:
+    endpoints: []
+
+cors:
+  allow:
+    origins:
+      - http://127.0.0.1:__HTTP_PORT__
+      - http://localhost:__HTTP_PORT__

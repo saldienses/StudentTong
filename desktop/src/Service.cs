@@ -11,18 +11,19 @@ namespace StudyDesk {
  public class ServiceClient : IServiceClient {
   public string Platform="chaoxing",AccountId="";
   readonly HttpClient http=new HttpClient(new HttpClientHandler {UseProxy=false});
-  public ServiceClient(){http.BaseAddress=new Uri("http://127.0.0.1:3030");http.Timeout=TimeSpan.FromSeconds(210);}
+  public ServiceClient(){http.Timeout=TimeSpan.FromSeconds(210);}
+  static Uri Endpoint(){string file=System.IO.Path.Combine(Desktop.Root,"config","portable-state.json");if(System.IO.File.Exists(file)){var state=new JavaScriptSerializer().Deserialize<Dictionary<string,object>>(System.IO.File.ReadAllText(file));int port=Convert.ToInt32(state["httpPort"]);if(port<1024||port>65535)throw new InvalidOperationException("本机端口配置无效");return new Uri("http://127.0.0.1:"+port);}return new Uri("http://127.0.0.1:3030");}
   public async Task<Dictionary<string,object>> RequestAsync(string path,Dictionary<string,object> body,CancellationToken cancel){
    if(!path.StartsWith("/")||path.StartsWith("//")||path.Contains(":")||path.Contains("\\"))throw new ArgumentException("仅允许本机服务路径");
    string platform=Platform,accountId=AccountId;if(platform=="yuketang"&&path=="/local/review/collect")path="/local/yuketang/review/collect";
    var json=new JavaScriptSerializer {MaxJsonLength=8*1024*1024};
-   using(var request=new HttpRequestMessage(body==null?HttpMethod.Get:HttpMethod.Post,path)){
+   using(var request=new HttpRequestMessage(body==null?HttpMethod.Get:HttpMethod.Post,new Uri(Endpoint(),path))){
     request.Headers.Add("X-Study-Platform",platform);if(!string.IsNullOrEmpty(accountId))request.Headers.Add("X-Study-Account",accountId);
     if(body!=null)request.Content=new StringContent(json.Serialize(body),Encoding.UTF8,"application/json");
     using(var response=await http.SendAsync(request,cancel)){
      if(!response.IsSuccessStatusCode)throw new InvalidOperationException("本机服务请求失败，HTTP "+(int)response.StatusCode);
      var result=json.Deserialize<Dictionary<string,object>>(await response.Content.ReadAsStringAsync());
-     if(result==null)throw new InvalidOperationException("服务返回内容为空");
+     if(result==null)throw new InvalidOperationException("服务返回内容为空");if(path=="/local/status"&&System.IO.File.Exists(System.IO.Path.Combine(Desktop.Root,"config","portable-state.json"))&&(!result.ContainsKey("installationRoot")||!System.IO.Path.GetFullPath(Data.Text(result,"installationRoot")).Equals(Desktop.Root,StringComparison.OrdinalIgnoreCase)))throw new InvalidOperationException("本机端口由其他安装目录使用，正在准备独立服务");
      if(result.ContainsKey("code")&&Convert.ToInt32(result["code"])!=200)throw new InvalidOperationException(Data.Text(result,"msg"));
      return result;
     }

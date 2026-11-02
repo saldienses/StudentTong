@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -18,7 +18,8 @@ using StudyDesk.Contracts;
 
 namespace StudyDesk {
  public partial class Desktop {
-  public static string Root="D:\\tool\\qita\\SuperAutoStudy";
+  public static string Root=Path.GetFullPath(Environment.GetEnvironmentVariable("STUDYDESK_ROOT")??Path.Combine(AppDomain.CurrentDomain.BaseDirectory,".."));
+ static string InstanceMutex(){using(var hash=System.Security.Cryptography.SHA256.Create())return "Local\\StudentTongDesktop-"+BitConverter.ToString(hash.ComputeHash(System.Text.Encoding.UTF8.GetBytes(Root.ToUpperInvariant()))).Replace("-","").Substring(0,20);}
   Window window;StackPanel content,taskPanel;TextBlock notice,indicator;
   readonly StudyDesk.Contracts.IServiceClient client;
   public Desktop():this(new ServiceClient()){}
@@ -33,8 +34,8 @@ namespace StudyDesk {
   [DllImport("user32.dll")]static extern bool ShowWindow(IntPtr h,int command);
   [STAThread]public static void Main(string[] args){
    bool verify=args.Length==2&&args[0]=="--verify";bool created;
-   using(var mutex=new Mutex(true,"Local\\SuperAutoStudyDesktop",out created)){
-    if(!verify&&!created){foreach(var process in Process.GetProcessesByName("StudyDesk"))if(process.Id!=Process.GetCurrentProcess().Id&&process.MainWindowHandle!=IntPtr.Zero){ShowWindow(process.MainWindowHandle,9);SetForegroundWindow(process.MainWindowHandle);break;}return;}
+   using(var mutex=new Mutex(true,InstanceMutex(),out created)){
+    if(!verify&&!created){foreach(var process in Process.GetProcessesByName("StudyDesk"))if(process.Id!=Process.GetCurrentProcess().Id&&process.MainWindowHandle!=IntPtr.Zero&&process.MainModule.FileName.Equals(Assembly.GetExecutingAssembly().Location,StringComparison.OrdinalIgnoreCase)){ShowWindow(process.MainWindowHandle,9);SetForegroundWindow(process.MainWindowHandle);break;}return;}
     var app=new Application();app.DispatcherUnhandledException+=(s,e)=>{MessageBox.Show("操作未完成，请重试。运行日志位于安装目录 logs 文件夹。","学生通");e.Handled=true;};
     try{new Desktop().Run(app,verify?args[1]:null);}catch(Exception){MessageBox.Show("学生通启动失败，请检查 client 目录是否完整。","学生通");Environment.ExitCode=1;}
    }
@@ -200,7 +201,7 @@ namespace StudyDesk {
   async Task Verify(){
    try{if(!ready)throw new InvalidOperationException("Service unavailable");Directory.CreateDirectory(verificationDir);await Refresh();await Task.Delay(500);int count=lastTaskCount;Capture("desktop-chapters");Navigate("homework");while(refreshing)await Task.Delay(100);await Refresh();await Task.Delay(150);Capture("desktop-homework");Navigate("exams");while(refreshing)await Task.Delay(100);await Refresh();await Task.Delay(150);Capture("desktop-exams");Navigate("signin");while(signinLoading)await Task.Delay(100);await LoadSignin();await LoadLocations();await Task.Delay(150);Capture("desktop-signin");string savedPlatform=platform,savedAccount=selectedAccount;platform="yuketang";selectedAccount=Data.Text(selectedByPlatform,"yuketang");scopeVersion++;ApplyScope();Navigate("chapters");while(rainLoading)await Task.Delay(100);await LoadRainTasks();Capture("desktop-yuketang");platform=savedPlatform;selectedAccount=savedAccount;scopeVersion++;ApplyScope();Navigate("settings");await LoadAi();await Task.Delay(300);Capture("desktop-settings");Navigate("review");await LoadReview();await Task.Delay(150);Capture("desktop-review");if(reviewUiFixture)await VerifyReviewPractice();Navigate("settings");await LoadAi();
     AskAutoAnswer(new StudyTask{Title="自动答题选项预览"},true);
-    if((networkWrites!=0&&!reviewUiFixture)||key.Password.Length!=0||count==0||!verifiedAutoSubmitDefaultOff)throw new InvalidOperationException("Verification invariant failed");
+    if((networkWrites!=0&&!reviewUiFixture)||key.Password.Length!=0||(!File.Exists(Path.Combine(Root,"distribution.json"))&&count==0)||!verifiedAutoSubmitDefaultOff||(File.Exists(Path.Combine(Root,"distribution.json"))&&(!providers.ContainsKey("homework")||!providers.ContainsKey("exams"))))throw new InvalidOperationException("Verification invariant failed");
     File.WriteAllText(Path.Combine(verificationDir,"verification.json"),new JavaScriptSerializer().Serialize(new{applicationName=window.Title,autoSubmitDefaultOff=verifiedAutoSubmitDefaultOff,nativeDesktop=true,serviceConnected=ready,taskCount=count,navigationPages=6,platformSwitchAvailable=true,accountSwitchAvailable=true,reviewPracticeFixturePassed=reviewFixturePassed,mutationRequests=networkWrites,apiKeyEmpty=key.Password.Length==0,homeworkAvailable=providers.ContainsKey("homework"),examsAvailable=providers.ContainsKey("exams")}));
    }catch(Exception e){Directory.CreateDirectory(verificationDir);File.WriteAllText(Path.Combine(verificationDir,"verification-error.txt"),e.GetType().Name+": "+e.Message);Environment.ExitCode=1;}finally{window.Close();}
   }

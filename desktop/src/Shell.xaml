@@ -17,14 +17,14 @@
     <TextBlock Text="工具与偏好" Foreground="#8593AE" Margin="10,30,0,12" FontSize="11"/>
     <Button x:Name="NavSettings" Content="⚙    设置" Margin="0,0,0,9" Background="#27344B"/>
    </StackPanel>
-   <StackPanel Grid.Row="2" VerticalAlignment="Bottom"><TextBlock x:Name="ServiceIndicator" Text="●  正在连接服务" Foreground="#A9BBD8" FontSize="12"/><TextBlock Text="桌面版 1.0 · 网页优先识别" Foreground="#7E8DA9" FontSize="11" Margin="0,8,0,0"/></StackPanel>
+   <StackPanel Grid.Row="2" VerticalAlignment="Bottom"><TextBlock x:Name="ServiceIndicator" Text="●  正在连接服务" Foreground="#A9BBD8" FontSize="12"/><TextBlock Text="桌面版 0.3.0 · 网页优先识别" Foreground="#7E8DA9" FontSize="11" Margin="0,8,0,0"/></StackPanel>
   </Grid></Border>
   <Grid Grid.Column="1" Margin="34,27,34,18"><Grid.RowDefinitions><RowDefinition Height="48"/><RowDefinition Height="83"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="32"/></Grid.RowDefinitions>
    <Grid Grid.Row="0"><StackPanel Orientation="Horizontal" VerticalAlignment="Top"><Button x:Name="PlatformChaoxing" Content="学习通" Padding="18,8" Margin="0,0,8,0"/><Button x:Name="PlatformRain" Content="雨课堂" Padding="18,8" Background="#E7EDFA" Foreground="#47658D"/></StackPanel><StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top"><TextBlock x:Name="CurrentAccount" Text="读取账号中…" VerticalAlignment="Center" Foreground="#78869B" Margin="0,0,12,0"/><Button x:Name="SwitchAccount" Content="切换账号" Padding="16,8" Background="White" Foreground="#47658D"/></StackPanel></Grid>
    <Grid Grid.Row="1"><StackPanel><TextBlock x:Name="PageTitle" Text="章节" FontSize="28" FontWeight="Bold"/><TextBlock x:Name="PageSubtitle" Text="课程、视频与章节小测，一处查看和管理。" Foreground="#7B879C" Margin="0,8,0,0"/></StackPanel><Button x:Name="RefreshButton" Content="刷新" Background="White" Foreground="#466185" HorizontalAlignment="Right" VerticalAlignment="Top"/></Grid>
    <Border Grid.Row="2" x:Name="NoticeBorder" Background="#E7EFFD" CornerRadius="7" Padding="14,10" Margin="0,0,0,16"><TextBlock x:Name="Notice" Text="正在连接本机学习服务…" Foreground="#3E6599" TextWrapping="Wrap"/></Border>
    <ScrollViewer x:Name="PageScroll" Grid.Row="3" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><StackPanel x:Name="PageContent" Margin="0,0,12,0"/></ScrollViewer>
-   <TextBlock Grid.Row="4" x:Name="Footer" Text="本机运行 · 安装与数据位于 D:\tool\qita\SuperAutoStudy" Foreground="#8792A5" FontSize="11" VerticalAlignment="Bottom"/>
+   <TextBlock Grid.Row="4" x:Name="Footer" Text="本机运行 · 数据保存在当前安装目录" Foreground="#8792A5" FontSize="11" VerticalAlignment="Bottom"/>
   </Grid>
  </Grid>
 </Window>

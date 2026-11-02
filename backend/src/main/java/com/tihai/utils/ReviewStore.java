@@ -2,7 +2,7 @@ package com.tihai.utils;
 import org.springframework.stereotype.Service;import com.fasterxml.jackson.databind.*;import java.nio.file.*;import java.nio.charset.StandardCharsets;import java.util.*;import java.io.*;
 @Service public class ReviewStore {
  private final Path file;private final ObjectMapper json=new ObjectMapper();private Map<String,Object> root;
- public ReviewStore(){this(Paths.get("D:/tool/qita/SuperAutoStudy/data/review/library.json"));}
+ public ReviewStore(){this(com.tihai.utils.InstallRoot.path("data/review/library.json"));}
  public ReviewStore(Path path){file=path;try{root=Files.exists(file)?json.readValue(Files.readAllBytes(file),Map.class):new LinkedHashMap<>();}catch(IOException e){throw new IllegalStateException("复习题库文件无法读取，已停止写入以保留原文件",e);}root.putIfAbsent("courses",new LinkedHashMap<>());root.putIfAbsent("questions",new LinkedHashMap<>());root.putIfAbsent("wrong",new LinkedHashMap<>());root.putIfAbsent("references",new LinkedHashMap<>());}
  private Map<String,Map<String,Object>> map(String key){return (Map)root.get(key);}
  private void save()throws IOException{Files.createDirectories(file.getParent());Path temp=file.resolveSibling(file.getFileName()+".new");Files.write(temp,json.writeValueAsBytes(root));try{Files.move(temp,file,StandardCopyOption.REPLACE_EXISTING,StandardCopyOption.ATOMIC_MOVE);}catch(AtomicMoveNotSupportedException e){Files.move(temp,file,StandardCopyOption.REPLACE_EXISTING);}}

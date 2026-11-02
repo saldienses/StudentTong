@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 @Component
 public class QuizVisionService {
-    private static final Path BASE=Paths.get("D:/tool/qita/SuperAutoStudy");
+    private static final Path BASE=com.tihai.utils.InstallRoot.path("");
     @Autowired private DeepSeekClient ai;
     @Autowired private LiveProgressTracker progress;
     private final ObjectMapper json=new ObjectMapper();
@@ -27,9 +27,9 @@ public class QuizVisionService {
         try{
             Path out=dir.resolve("result.json"),err=dir.resolve("render.err");
             Map<String,Object> input=new LinkedHashMap<>();input.put("html",html);input.put("ids",ids);input.put("outputDir",dir.toString());
-            String programFiles=System.getenv("ProgramFiles(x86)");Path edge=Paths.get(programFiles==null?"C:/Program Files (x86)":programFiles,"Microsoft/Edge/Application/msedge.exe");
+            String programFiles=System.getenv("ProgramFiles(x86)");Path edge=Paths.get(com.tihai.utils.InstallRoot.browser());
             input.put("edge",edge.toString());
-            ProcessBuilder pb=new ProcessBuilder(BASE.resolve("runtime/vision-node/node.exe").toString(),BASE.resolve("config/quiz-render.cjs").toString());
+            ProcessBuilder pb=new ProcessBuilder(BASE.resolve("runtime/node/node.exe").toString(),BASE.resolve("config/quiz-render.cjs").toString());
             pb.directory(BASE.toFile());pb.environment().put("TEMP",dir.toString());pb.environment().put("TMP",dir.toString());pb.redirectOutput(out.toFile());pb.redirectError(err.toFile());
             child=pb.start();try(OutputStream stream=child.getOutputStream()){stream.write(json.writeValueAsBytes(input));}
             if(!child.waitFor(55,TimeUnit.SECONDS)){child.destroyForcibly();throw new IOException("题目截图超时，本次未提交");}
